@@ -1,0 +1,484 @@
+{
+  "Global": {
+    "CantConnect": {
+      "Text": "There is error when connecting to the server. Please check your internet connection and try again later. If this issue persist, please contact our customer support."
+    },
+    "Unauthorized": {
+      "Admin": {
+        "Title": "Sorry, you are not allowed to access this page. Please return to the app page by clicking this button:",
+        "Button": "Go back"
+      }
+    },
+    "UserType": {
+      "admin": "Admin",
+      "super_admin": "Super Admin"
+    },
+    "Sidebar": {
+      "Settings": "Settings",
+      "Notifications": "Notifications",
+      "Admin": "Admin",
+      "App": "Go to App",
+      "DrawerItem": {
+        "App": {
+          "Home": "Home"
+        },
+        "Admin": {
+          "Home": "Home",
+          "RBAC": {
+            "Title": "RBAC",
+            "UserManagement": "User Management",
+            "Role": "Role",
+            "Permission": "Permission"
+          }
+        }
+      },
+      "LocaleSwitcher": {
+        "en": "English",
+        "id": "Indonesia"
+      },
+      "Logout": "Logout"
+    },
+    "Component": {
+      "Dropzone": {
+        "FileInvalid": "File type is invalid! Type must be one of {type}.",
+        "TooManyFile": "Too many files selected. Please choose only {total} files or remove already selected files before adding another one.",
+        "FileTooLarge": "File size is too large. Maximum file size is {size}",
+        "FileTooSmall": "File size is too small. Minimum file size is {size}",
+        "Title": "Drag & drop files here, or click to browse",
+        "Subtitle": "{text} up to {size}",
+        "AcceptInText": "File(s)"
+      },
+      "DatePicker": {
+        "MinDate": "Date must be after {minDate}",
+        "MaxDate": "Date must be before {maxDate}",
+        "DisableFuture": "Date must not be in the future",
+        "DisablePast": "Date must not be in the past",
+        "InvalidDate": "Date string is invalid"
+      },
+      "Table": {
+        "LoadError": "There is error when fetching the data",
+        "RefetchData": "Refetch Data",
+        "Delete": {
+          "Title": "Delete/Deactivate",
+          "DialogTitle": "Delete/Deactivate {name}",
+          "DialogContent": "Are you sure want to delete/deactivate {data}?"
+        },
+        "Restore": {
+          "Title": "Restore",
+          "DialogTitle": "Restore {name}",
+          "DialogContent": "Are you sure want to restore {data}?"
+        },
+        "Add": {
+          "Title": "Add {name}",
+          "Button": "Add {name}"
+        },
+        "Edit": {
+          "Title": "Edit {name}",
+          "Tooltip": "Edit"
+        },
+        "TextFieldProps": {
+          "From": "From",
+          "To": "To"
+        },
+        "Toolbar": {
+          "ClearFilter": "Clear Filter"
+        },
+        "FormActions": {
+          "Submit": "Save",
+          "Cancel": "Cancel"
+        },
+        "Cell": {
+          "ListCell": {
+            "Show": "Show",
+            "Hide": "Hide",
+            "Empty": "(Empty)"
+          }
+        }
+      },
+      "Breadcrumbs": {
+        "CopyUrl": {
+          "Title": "Copy Current URL",
+          "Success": "Url copied to clipboard",
+          "Failed": "Failed to copy URL"
+        }
+      }
+    }
+  },
+  "Service": {
+    "Common": {
+      "Errors": {
+        "00002": "There is already a data that have the same values with your new data.",
+        "00003": "One of the property in your data has invalid type or value. Please check again.",
+        "00004": "One of the property in your data has empty value. Please check again.",
+        "00005": "There is error on server. Please contact our customer service."
+      }
+    },
+    "Auth": {
+      "Errors": {
+        "FieldError": "There is an error while logging in. Please check all the fields or try again.",
+        "CredentialError": "Invalid username or password",
+        "01003": "You already requested forgot password request a few minutes ago. Please wait a few more minutes until you can try another request.",
+        "01004": "There is error when sending the email. Please check again your email.",
+        "01005": "Reset password token is invalid or expired. Please proceed to request another token.",
+        "01006": "There is error when updating your password. Please try again later or contact our customer support.",
+        "01007": "Permission does not exist! Please check again or contact our customer support",
+        "01008": "Role does not exist! Please check again or contact our customer support",
+        "01009": "There is error when creating role. Please try again later or contact our customer support."
+      },
+      "Form": {
+        "RegisterSuccess": "User successfully created!",
+        "ResetPasswordSuccess": "User forcefully asked to change password",
+        "ChangePasswordSuccess": "Password saved! Please login with the new password.",
+        "LoginSuccess": "Login Success!",
+        "ForgotPasswordSuccess": "Email sent! Please check your inbox or spam.",
+        "GrantPermissionSuccess": "Permission granted successfully!",
+        "RevokePermissionSuccess": "Permission revoked successfully!",
+        "ChangeRoleSuccess": "User role has been changed.",
+        "CreateRoleSuccess": "Role successfully created.",
+        "UpdateRoleSuccess": "Role successfully updated.",
+        "DeleteRoleSuccess": "Role successfully deleted.",
+        "RestoreRoleSuccess": "Role successfully restored."
+      }
+    },
+    "User": {
+      "UpdateProfile": {
+        "Success": "Profile updated!",
+        "Errors": {
+          "FieldError": "There is an error while updating your profile. Please check all the fields for error or try again later.",
+          "03001": "Profile is not found! Try logout and logging in again."
+        }
+      },
+      "EmailVerification": {
+        "Success": "Verification email has been sent. Please check your inbox or spam.",
+        "Verified": "Your account has been verified. Thank you.",
+        "Error": {
+          "00001": "Sorry, verification code is invalid.",
+          "03003": "Email is empty! Please check again.",
+          "03004": "Verification success! This account is verified.",
+          "03005": "You already requested email verification not too long ago. Please try again later.",
+          "03008": "Sorry, verification code is invalid.",
+          "03009": "Verification code is expired. Please try requesting another verification token.",
+          "Other": "There is error when sending verification email. Please check that you have input the correct email and try again later or contact our customer support if the issue persist."
+        }
+      }
+    },
+    "File": {
+      "Errors": {
+        "PrepareUploadError": "There is error when preparing file to upload. Please try again.",
+        "UploadError": "There is error when uploading the file. Please try again.",
+        "CompleteUploadError": "There is error when finishing the file. Please try again."
+      }
+    }
+  },
+  "Page": {
+    "Settings": {
+      "Title": "Settings",
+      "Appearance": {
+        "Title": "Appearance",
+        "Dark": "Dark",
+        "Light": "Light",
+        "System": "System",
+        "SubtitleMode": "Mode",
+        "SubtitleTheme": "Theme",
+        "ThemeDefault": "Default",
+        "ThemeRoseQuartz": "Rose Quartz",
+        "ThemeForestSerenity": "Forest Serenity",
+        "ThemeNordicFrost": "Nordic Frost",
+        "ThemeSolarFlare": "Solar Flare",
+        "ThemeMidnightViolet": "Midnight Violet",
+        "ThemeOceanicCalm": "Oceanic Calm"
+      },
+      "UserProfile": {
+        "PersonalInformation": {
+          "Title": "Personal Information",
+          "Form": {
+            "Email": {
+              "Label": "Email",
+              "Verified": "Verified",
+              "NotVerified": "Not Verified",
+              "SendVerificationEmail": "Send Email Verification"
+            },
+            "Username": {
+              "Label": "Username"
+            },
+            "FullName": {
+              "Label": "Full Name"
+            },
+            "MiddleName": {
+              "Label": "Middle Name"
+            },
+            "LastName": {
+              "Label": "Last Name"
+            },
+            "PhoneNumber": {
+              "Label": "Phone Number",
+              "CountryCodes": "Country Code",
+              "Number": "Phone Number",
+              "FailedLoadCountryCodes": "Failed to load country codes",
+              "EmptyPhoneNumber": "Phone number is still empty"
+            },
+            "Birthday": {
+              "Label": "Birthday",
+              "POB": {
+                "Label": "Place of Birth",
+                "FailedLoadCities": "Failed to load cities"
+              },
+              "DOB": {
+                "Label": "Date of Birth"
+              }
+            },
+            "Gender": {
+              "Label": "Gender",
+              "Male": "Male",
+              "Female": "Female"
+            },
+            "Religion": {
+              "Label": "Religion",
+              "Islam": "Islam",
+              "Christian": "Christian",
+              "Catholic": "Catholic",
+              "Buddhism": "Buddhism",
+              "Hinduism": "Hinduism",
+              "Other": "Other"
+            },
+            "About": {
+              "Label": "About"
+            }
+          },
+          "SaveButton": "Save",
+          "ResetButton": "Reset Changes"
+        },
+        "ProfilePicture": {
+          "Title": "Profile Picture"
+        },
+        "Address": {
+          "Title": "Address",
+          "Form": {
+            "Province": {
+              "Label": "Province"
+            },
+            "City": {
+              "Label": "City"
+            },
+            "District": {
+              "Label": "District"
+            },
+            "SubDistrict": {
+              "Label": "Sub District"
+            },
+            "PostalCode": {
+              "Label": "Postal Code"
+            },
+            "Address": {
+              "Label": "Address"
+            }
+          },
+          "SaveButton": "Save Address",
+          "ResetButton": "Reset Changes"
+        },
+        "Form": {
+          "Address": {},
+          "ProfilePicture": {
+            "Label": "Profile Picture"
+          }
+        },
+        "SaveButton": "Save",
+        "ResetButton": "Reset Changes"
+      },
+      "TabProfile": "Profile",
+      "TabGeneral": "General",
+      "TabSecurity": "Security"
+    },
+    "Login": {
+      "Title": "Welcome!",
+      "Subtitle": "Please login to continue",
+      "Form": {
+        "Username": {
+          "Label": "Email or Username"
+        },
+        "Password": {
+          "Label": "Password"
+        },
+        "RememberMe": {
+          "Label": "Remember Me"
+        },
+        "ForgotPassword": "Forgot Password?",
+        "LoginButton": "Login"
+      }
+    },
+    "EmailVerification": {
+      "Processing": "Processing..."
+    },
+    "ForgotPassword": {
+      "Title": "Forgot Password",
+      "Subtitle": "Please enter your email",
+      "Form": {
+        "Email": {
+          "Label": "Email"
+        },
+        "ForgotPasswordButton": "Submit"
+      }
+    },
+    "ResetPassword": {
+      "Title": "Reset Password",
+      "Form": {
+        "Email": {
+          "Label": "Email"
+        },
+        "Token": {
+          "Label": "Token"
+        },
+        "Password": {
+          "Label": "New Password"
+        },
+        "ConfirmPassword": {
+          "Label": "Confirm Password"
+        },
+        "ResetPasswordButton": "Submit"
+      }
+    },
+    "Admin": {
+      "RBAC": {
+        "UserManagement": {
+          "Title": "User Management",
+          "EntityName": "User",
+          "Form": {
+            "Username": {
+              "Label": "Username"
+            },
+            "Fullname": {
+              "Label": "Full Name"
+            },
+            "Email": {
+              "Label": "Email"
+            },
+            "Role": {
+              "Label": "Role"
+            },
+            "Password": {
+              "DialogTitle": "User Created",
+              "DialogContent": "This is the password for the new user: {password}"
+            },
+            "Permissions": {
+              "Close": "Close",
+              "Actions": {
+                "manage": "Manage",
+                "read": "Read",
+                "create": "Create",
+                "update": "Update",
+                "delete": "Delete"
+              },
+              "OpenAdmin": "Open Admin Page",
+              "ManageSystem": "Manage System",
+              "Resources": {
+                "user": "User",
+                "rbac": "RBAC"
+              },
+              "Title": "Edit Permissions",
+              "FormTitle": "Edit Permissions for {user}",
+              "Allow": "Allow ?",
+              "Manage": {
+                "Label": "Manage (all actions)",
+                "SubLabel": "Includes read, create, update, and delete"
+              }
+            }
+          },
+          "Table": {
+            "Username": {
+              "Header": "Username"
+            },
+            "FullName": {
+              "Header": "Full Name"
+            },
+            "Email": {
+              "Header": "Email"
+            },
+            "Role": {
+              "Header": "Role"
+            },
+            "ResetPassword": {
+              "Label": "Force Reset Password",
+              "DialogTitle": "Force Reset Password",
+              "DialogContent": "Are you sure want to force reseting {user} password? The user will be prompted to change their password."
+            }
+          }
+        },
+        "Role": {
+          "Title": "Role",
+          "EntityName": "Role",
+          "Table": {
+            "Name": {
+              "Header": "Name"
+            },
+            "DisplayName": {
+              "Header": "Display Name"
+            },
+            "Permission": {
+              "Header": "Permissions"
+            },
+            "Status": {
+              "Header": "Status",
+              "Active": "Active",
+              "Inactive": "Inactive"
+            },
+            "System": {
+              "Header": "Is System",
+              "Yes": "Yes",
+              "No": "No"
+            }
+          },
+          "Form": {
+            "Permissions": {
+              "Label": "Permissions"
+            },
+            "Name": {
+              "Label": "Name"
+            },
+            "DisplayName": {
+              "Label": "Display Name"
+            },
+            "Description": {
+              "Label": "Description"
+            },
+            "System": {
+              "Label": "Is System?"
+            }
+          }
+        },
+        "Permission": {
+          "Title": "Permission",
+          "EntityName": "Permission",
+          "Table": {
+            "Name": {
+              "Header": "Name"
+            },
+            "DisplayName": {
+              "Header": "Display Name"
+            }
+          }
+        }
+      }
+    }
+  },
+  "Zod": {
+    "Required": "This field is required",
+    "MinLength": "Expected input to have >={min} characters",
+    "MaxLength": "Expected input to have <={max} characters",
+    "InvalidEmail": "Invalid email address",
+    "InvalidPhoneNumber": "Phone number is invalid",
+    "Date": {
+      "InvalidDate": "Date string is invalid",
+      "DisableFuture": "Date must not be in the future",
+      "MinDate": "Date must be after {minDate}",
+      "MaxDate": "Date must be before {maxDate}",
+      "DisablePast": "Date must not be in the past"
+    },
+    "PasswordNotSame": "Passwords do not match",
+    "InvalidType": "Invalid Input"
+  },
+  "APIValidationError": {
+    "isNotEmpty": "This field is required",
+    "minLength": "Expected input to have >={min} characters",
+    "maxLength": "Expected input to have <={max} characters"
+  }
+}

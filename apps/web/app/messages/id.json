@@ -1,0 +1,141 @@
+{
+  "Global": {
+    "UserType": {
+      "Admin": "Admin",
+      "Teacher": "Guru",
+      "Student": "Murid"
+    },
+    "Sidebar": {
+      "Settings": "Pengaturan",
+      "Notifications": "Notifikasi",
+      "DrawerItem": {
+        "Home": "Beranda"
+      },
+      "LocaleSwitcher": {
+        "en": "English",
+        "id": "Indonesia"
+      },
+      "Logout": "Keluar"
+    },
+    "Component": {
+      "Dropzone": {
+        "FileInvalid": "File type is invalid! Type must be one of {type}.",
+        "TooManyFile": "Too many files selected. Please choose only {total} files or remove already selected files before adding another one.",
+        "FileTooLarge": "File size is too large. Maximum file size is {size}",
+        "FileTooSmall": "File size is too small. Minimum file size is {size}"
+      },
+      "DatePicker": {
+        "InvalidDate": "Date is not valid",
+        "MinDate": "Date must be after {minDate}",
+        "MaxDate": "Date must be before {maxDate}",
+        "DisableFuture": "Date must not be in the future",
+        "DisablePast": "Date must not be in the past"
+      }
+    }
+  },
+  "Service": {
+    "Auth": {
+      "Errors": {
+        "FieldError": "There is an error while logging in. Please check all the fields or try again.",
+        "CredentialError": "Invalid username or password"
+      },
+      "Form": {
+        "LoginSuccess": "Login Berhasil!"
+      }
+    },
+    "User": {},
+    "File": {
+      "Errors": {
+        "PrepareUploadError": "There is error when preparing file to upload. Please try again.",
+        "UploadError": "There is error when uploading the file. Please try again.",
+        "CompleteUploadError": "There is error when finishing the file. Please try again."
+      }
+    }
+  },
+  "Page": {
+    "Settings": {
+      "Title": "Pengaturan",
+      "Appearance": {
+        "Title": "Antarmuka",
+        "Dark": "Gelap",
+        "Light": "Terang",
+        "System": "Sistem",
+        "SubtitleMode": "Mode",
+        "SubtitleTheme": "Tema",
+        "ThemeDefault": "Standar",
+        "ThemeRoseQuartz": "Rose Quartz",
+        "ThemeForestSerenity": "Forest Serenity",
+        "ThemeNordicFrost": "Nordic Frost",
+        "ThemeSolarFlare": "Solar Flare",
+        "ThemeMidnightViolet": "Midnight Violet",
+        "ThemeOceanicCalm": "Oceanic Calm"
+      },
+      "UserProfile": {
+        "SubtitleBasicProfile": "Basic Profile",
+        "Form": {
+          "Email": {
+            "Label": "Email"
+          },
+          "Username": {
+            "Label": "Username",
+            "Helper": "Username can be used to replace email for login."
+          },
+          "FirstName": {
+            "Label": "First Name"
+          },
+          "MiddleName": {
+            "Label": "Middle Name"
+          },
+          "LastName": {
+            "Label": "Last Name"
+          },
+          "PhoneNumber": {
+            "Label": "Phone Number",
+            "CountryCodes": "Country Code",
+            "Number": "Phone Number",
+            "FailedLoadCountryCodes": "Failed to load country codes"
+          },
+          "Birthday": {
+            "Label": "Birthday",
+            "POB": {
+              "Label": "Place of Birth",
+              "FailedLoadCities": "Failed to load cities"
+            },
+            "DOB": {
+              "Label": "Date of Birth"
+            }
+          },
+          "Gender": {
+            "Label": "Gender"
+          }
+        }
+      },
+      "TabProfile": "Profile",
+      "TabGeneral": "General",
+      "TabSecurity": "Security"
+    },
+    "Login": {
+      "Title": "Selamat Datang!",
+      "Subtitle": "Silahkan masuk untuk melanjutkan",
+      "Form": {
+        "Username": {
+          "Placeholder": "E-mail atau Username"
+        },
+        "Password": {
+          "Placeholder": "Kata Sandi"
+        },
+        "ForgotPassword": "Lupa Kata Sandi?"
+      }
+    }
+  },
+  "Zod": {
+    "Required": "Kolom ini wajib diisi",
+    "MinLength": "Text harus memiliki >={min} karakter",
+    "MaxLength": "Text harus memiliki <={max} karakter"
+  },
+  "APIValidationError": {
+    "isNotEmpty": "This field is required",
+    "minLength": "Text harus memiliki >={min} karakter",
+    "maxLength": "Text harus memiliki <={max} karakter"
+  }
+}

@@ -1,0 +1,55 @@
+import { Box, Paper, Typography } from "@mui/material";
+import { LanguageSwitcher } from "@web/components/LanguageSwitcher.component";
+import LoginForm from "@web/components/page/login/Login.form";
+import type { Metadata } from "next";
+import { useTranslations } from "next-intl";
+import Image from "next/image";
+
+export const metadata: Metadata = {
+  title: "Login",
+};
+
+export default function LoginPage() {
+  const t = useTranslations("Page.Login");
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        height: "100vh",
+      }}
+    >
+      <Paper
+        elevation={3}
+        sx={{
+          p: 2,
+          display: "flex",
+          alignItems: "center",
+          flexDirection: "column",
+          justifyContent: "center",
+          maxWidth: { xs: "85vw", md: "50vw", xl: "30vw" },
+        }}
+      >
+        <Image
+          loading="eager"
+          src="/logo.png"
+          alt="logo"
+          width={225}
+          height={49}
+        />
+        <Typography variant="h6" align="center" sx={{ mt: 1 }}>
+          {t("Title")}
+        </Typography>
+        <Typography variant="body2" align="center">
+          {t("Subtitle")}
+        </Typography>
+        <LoginForm />
+        <Box justifyContent="space-evenly" minWidth="250px" display="flex">
+          <LanguageSwitcher />
+        </Box>
+      </Paper>
+    </Box>
+  );
+}
