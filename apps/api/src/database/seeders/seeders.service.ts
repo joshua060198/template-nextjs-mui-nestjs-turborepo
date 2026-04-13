@@ -54,8 +54,6 @@ export class SeedersService implements OnModuleInit {
 
   async seedPermissions(manager?: EntityManager) {
     this.logger.debug("========== SEEDING PERMISSIONS ==========");
-    const mod = await import("uuid");
-    const uuidV7 = mod.v7;
     const data: CreatePermission[] = Object.values(PermissionResource).flatMap(
       (resource) =>
         Object.values(PermissionAction).map(
@@ -68,25 +66,44 @@ export class SeedersService implements OnModuleInit {
         ),
     );
 
-    const result = await this.getPermissionRepo(manager).upsert(
-      [
-        ...data.map((v) => ({
-          id: uuidV7(),
-          name: `${v.action}:${v.resource}` as PermissionName,
+    const repo = this.getPermissionRepo(manager);
+
+    // 1. get all existing names
+    const existing = await repo.find({ select: ["name"] });
+    const existingNames = new Set(existing.map((v) => v.name));
+
+    // 2. filter only new ones
+    const toInsert = data
+      .filter((v) => !existingNames.has(`${v.action}:${v.resource}`))
+      .map((v) =>
+        repo.create({
+          name: `${v.action}:${v.resource}`,
           displayName: v.displayName,
-        })),
-        { id: uuidV7(), name: "manage:system", displayName: "Manage System" },
-        {
-          id: uuidV7(),
+        }),
+      );
+
+    // 3. insert once
+    if (toInsert.length) {
+      await repo.save(toInsert);
+    }
+
+    if (!(await repo.exists({ where: { name: "manage:system" } }))) {
+      await repo.save(
+        repo.create({
+          name: "manage:system",
+          displayName: "Manage System",
+        }),
+      );
+    }
+    if (!(await repo.exists({ where: { name: "open:admin_page" } }))) {
+      await repo.save(
+        repo.create({
           name: "open:admin_page",
           displayName: "Open Admin Page",
-        },
-      ],
-      ["name"],
-    );
-    this.logger.debug(
-      `Success!! Seeded ${result.identifiers.length} permission`,
-    );
+        }),
+      );
+    }
+    this.logger.debug(`Success!! Seeded ${data.length} permission`);
   }
 
   async seedRoles(manager?: EntityManager) {
@@ -228,7 +245,7 @@ export class SeedersService implements OnModuleInit {
   private capitalizeFirstWordString(input: string) {
     return input
       .split("_")
-      .map((s) => s.charAt(0).toUpperCase() + input.slice(1))
+      .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
       .join(" ");
   }
 }
