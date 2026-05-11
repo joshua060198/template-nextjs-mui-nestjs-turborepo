@@ -19,11 +19,6 @@ import {
   StringResponse,
 } from "@repo/common/common.type";
 import {
-  PermissionAction,
-  PermissionName,
-  PermissionResource,
-} from "@repo/common/entity/permission.entity.type";
-import {
   CreateRole,
   RoleId,
   UpdateRole,
@@ -107,14 +102,14 @@ export const queryPermission = async (params: QueryParamsType) => {
 };
 
 export const getAvailablePermissions = async () => {
-  const res = await api.get<ResponseSuccess<PermissionName[]>>(
+  const res = await api.get<ResponseSuccess<string[]>>(
     `${AUTH_API_VERSION}/${AUTH_PREFIX}/permission-list`,
   );
   return res.data.data;
 };
 
 export const getUserPermissions = async (id: UserId) => {
-  const res = await api.get<ResponseSuccess<PermissionName[]>>(
+  const res = await api.get<ResponseSuccess<string[]>>(
     `${AUTH_API_VERSION}/${AUTH_PREFIX}/user/${id}/permissions`,
   );
   return res.data.data;
@@ -202,14 +197,14 @@ export const restoreRole = async (id: RoleId) => {
 };
 
 export const getPermissionActions = async () => {
-  const res = await api.get<ResponseSuccess<PermissionAction[]>>(
+  const res = await api.get<ResponseSuccess<string[]>>(
     `${AUTH_API_VERSION}/${AUTH_PREFIX}/permission/actions`,
   );
   return res.data.data;
 };
 
 export const getPermissionResources = async () => {
-  const res = await api.get<ResponseSuccess<PermissionResource[]>>(
+  const res = await api.get<ResponseSuccess<string[]>>(
     `${AUTH_API_VERSION}/${AUTH_PREFIX}/permission/resources`,
   );
   return res.data.data;

@@ -2,7 +2,6 @@ import { Divider, Stack, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import {
   PermissionAction,
-  PermissionName,
   PermissionResource,
 } from "@repo/common/entity/permission.entity.type";
 import { UserId } from "@repo/common/entity/user.entity.type";
@@ -28,7 +27,7 @@ interface PermissionGroup {
  * { user: { manage: true, actions: {...} }, file: { manage: false, actions: {...} } }
  */
 const parsePermissions = (
-  permissions: PermissionName[],
+  permissions: string[],
 ): Record<PermissionResource, PermissionGroup> => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
@@ -80,8 +79,8 @@ const parsePermissions = (
  */
 const flattenPermissions = (
   groups: Record<PermissionResource, PermissionGroup>,
-): PermissionName[] => {
-  const permissions: PermissionName[] = [];
+): string[] => {
+  const permissions: string[] = [];
 
   Object.values(groups).forEach(({ resource, actions }) => {
     if (resource === ("system" as PermissionResource)) {
@@ -183,12 +182,12 @@ export default function EditPermissionForm({
               });
               if (checked) {
                 grant({
-                  permissionName: "open:admin_page",
+                  string: "open:admin_page",
                   userId: selectedUser,
                 });
               } else {
                 revoke({
-                  permissionName: "open:admin_page",
+                  string: "open:admin_page",
                   userId: selectedUser,
                 });
               }
@@ -254,12 +253,12 @@ export default function EditPermissionForm({
               });
               if (checked) {
                 grant({
-                  permissionName: "manage:system",
+                  string: "manage:system",
                   userId: selectedUser,
                 });
               } else {
                 revoke({
-                  permissionName: "manage:system",
+                  string: "manage:system",
                   userId: selectedUser,
                 });
               }
@@ -329,12 +328,12 @@ export default function EditPermissionForm({
                   });
                   if (checked) {
                     grant({
-                      permissionName: `manage:${resource}`,
+                      string: `manage:${resource}`,
                       userId: selectedUser,
                     });
                   } else {
                     revoke({
-                      permissionName: `manage:${resource}`,
+                      string: `manage:${resource}`,
                       userId: selectedUser,
                     });
                   }
@@ -398,12 +397,12 @@ export default function EditPermissionForm({
                           });
                           if (checked) {
                             grant({
-                              permissionName: `${action}:${resource}`,
+                              string: `${action}:${resource}`,
                               userId: selectedUser,
                             });
                           } else {
                             revoke({
-                              permissionName: `${action}:${resource}`,
+                              string: `${action}:${resource}`,
                               userId: selectedUser,
                             });
                           }

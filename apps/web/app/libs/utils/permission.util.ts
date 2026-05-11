@@ -1,6 +1,4 @@
-import { PermissionName } from "@repo/common/entity/permission.entity.type";
-
-export function isAllowedForRBACManagementPage(permissions: PermissionName[]) {
+export function isAllowedForRBACManagementPage(permissions: string[]) {
   return (
     permissions.filter(
       (p) =>

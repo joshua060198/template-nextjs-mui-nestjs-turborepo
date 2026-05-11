@@ -4,14 +4,9 @@ import { SystemConfigEntity } from "@api/database/entity/system.entity";
 import UserEntity from "@api/database/entity/user.entity";
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import {
-  CreatePermission,
-  PermissionAction,
-  PermissionName,
-  PermissionResource,
-} from "@repo/common/entity/permission.entity.type";
+import { CreatePermission } from "@repo/common/entity/permission.entity.type";
 import * as bcrypt from "bcrypt";
-import { DataSource, EntityManager, Like, Repository } from "typeorm";
+import { DataSource, EntityManager, Repository } from "typeorm";
 
 @Injectable()
 export class SeedersService implements OnModuleInit {
@@ -54,55 +49,58 @@ export class SeedersService implements OnModuleInit {
 
   async seedPermissions(manager?: EntityManager) {
     this.logger.debug("========== SEEDING PERMISSIONS ==========");
-    const data: CreatePermission[] = Object.values(PermissionResource).flatMap(
-      (resource) =>
-        Object.values(PermissionAction).map(
-          (action) =>
-            ({
-              action,
-              resource,
-              displayName: `${this.capitalizeFirstWordString(action)} ${this.capitalizeFirstWordString(resource)}`,
-            }) as CreatePermission,
-        ),
-    );
+    const data: CreatePermission[] = [
+      {
+        action: "manage",
+        resource: "system",
+        description: "Manage Entire System",
+        displayName: "Manage System",
+      },
+      {
+        action: "open",
+        resource: "admin_page",
+        description: "Open Admin Page",
+        displayName: "Open Admin Page",
+      },
+    ];
+
+    const actionList = ["manage", "create", "read", "update", "delete"];
+    const resourceList = ["user", "rbac"];
+
+    for (const action of actionList) {
+      for (const resource of resourceList) {
+        data.push({
+          action,
+          resource,
+          description: "",
+          displayName: `${this.capitalizeFirstWordString(action)} ${this.capitalizeFirstWordString(resource)}`,
+        });
+      }
+    }
 
     const repo = this.getPermissionRepo(manager);
 
-    // 1. get all existing names
-    const existing = await repo.find({ select: ["name"] });
-    const existingNames = new Set(existing.map((v) => v.name));
+    for (const d of data) {
+      const isExist = await repo.exists({
+        where: {
+          action: d.action,
+          resource: d.resource,
+        },
+      });
 
-    // 2. filter only new ones
-    const toInsert = data
-      .filter((v) => !existingNames.has(`${v.action}:${v.resource}`))
-      .map((v) =>
-        repo.create({
-          name: `${v.action}:${v.resource}`,
-          displayName: v.displayName,
-        }),
-      );
-
-    // 3. insert once
-    if (toInsert.length) {
-      await repo.save(toInsert);
+      if (!isExist) {
+        await repo.save(repo.create(d));
+      } else {
+        await repo.update(
+          {
+            action: d.action,
+            resource: d.resource,
+          },
+          d,
+        );
+      }
     }
 
-    if (!(await repo.exists({ where: { name: "manage:system" } }))) {
-      await repo.save(
-        repo.create({
-          name: "manage:system",
-          displayName: "Manage System",
-        }),
-      );
-    }
-    if (!(await repo.exists({ where: { name: "open:admin_page" } }))) {
-      await repo.save(
-        repo.create({
-          name: "open:admin_page",
-          displayName: "Open Admin Page",
-        }),
-      );
-    }
     this.logger.debug(`Success!! Seeded ${data.length} permission`);
   }
 
@@ -112,12 +110,12 @@ export class SeedersService implements OnModuleInit {
     const permissions = await this.getPermissionRepo(manager).find({
       where: [
         {
-          name: Like(
-            `${PermissionAction.MANAGE}%`,
-          ) as unknown as PermissionName,
+          action: "manage",
+          resource: "system",
         },
         {
-          name: `open:admin_page` as unknown as PermissionName,
+          action: "open",
+          resource: "admin_page",
         },
       ],
     });
@@ -127,7 +125,9 @@ export class SeedersService implements OnModuleInit {
       {
         name: "admin",
         displayName: "Admin",
-        permissions: permissions.filter((v) => v.name !== "manage:system"),
+        permissions: permissions.filter(
+          (v) => v.action !== "manage" && v.resource !== "system",
+        ),
       },
       { name: "user", displayName: "User", permissions: [] },
     ];

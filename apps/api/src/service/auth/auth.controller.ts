@@ -41,11 +41,7 @@ import {
   StringArrayResponseSchema,
   StringResponseSchema,
 } from "@repo/common/common.type";
-import {
-  BackendPermissionSchema,
-  PermissionAction,
-  PermissionResource,
-} from "@repo/common/entity/permission.entity.type";
+import { BackendPermissionSchema } from "@repo/common/entity/permission.entity.type";
 import {
   BackendRoleSchema,
   type RoleId,
@@ -85,10 +81,7 @@ export class AuthController {
   }
 
   @Post("/register")
-  @RequirePermissions({
-    action: PermissionAction.CREATE,
-    resource: PermissionResource.USER,
-  })
+  @RequirePermissions("create:user")
   @SchemaResponse(StringResponseSchema)
   register(@Body() payload: RegisterUserDto) {
     return this.authService.register(payload);
@@ -118,10 +111,7 @@ export class AuthController {
   @SchemaResponse(
     createSuccessResponseSchema(createPaginatedSchema(BackendPermissionSchema)),
   )
-  @RequirePermissions({
-    action: PermissionAction.READ,
-    resource: PermissionResource.RBAC,
-  })
+  @RequirePermissions("read:rbac")
   queryPermissions(@Paginate() query: PaginateQuery) {
     return this.authService.queryPermission(query);
   }
@@ -130,10 +120,7 @@ export class AuthController {
   @SchemaResponse(
     createSuccessResponseSchema(createPaginatedSchema(BackendRoleSchema)),
   )
-  @RequirePermissions({
-    action: PermissionAction.READ,
-    resource: PermissionResource.RBAC,
-  })
+  @RequirePermissions("read:rbac")
   queryRoles(@Paginate() query: PaginateQuery) {
     return this.authService.queryRole(query);
   }
@@ -144,20 +131,14 @@ export class AuthController {
       createPaginatedSchema(UserBackendSchema.omit({ password: true })),
     ),
   )
-  @RequirePermissions({
-    action: PermissionAction.READ,
-    resource: PermissionResource.RBAC,
-  })
+  @RequirePermissions("read:rbac")
   @UseInterceptors(ClassSerializerInterceptor)
   queryUser(@Paginate() query: PaginateQuery) {
     return this.authService.queryUser(query);
   }
 
   @Get("user/:id/permissions")
-  @RequirePermissions({
-    action: PermissionAction.READ,
-    resource: PermissionResource.RBAC,
-  })
+  @RequirePermissions("read:rbac")
   @SchemaResponse(StringArrayResponseSchema)
   getUserPermissions(@Param("id") id: UserId) {
     return this.authService.getUserPermissions(id);
@@ -165,40 +146,28 @@ export class AuthController {
 
   @Post("role")
   @SchemaResponse(UpdateRoleResponseSchema)
-  @RequirePermissions({
-    action: PermissionAction.CREATE,
-    resource: PermissionResource.RBAC,
-  })
+  @RequirePermissions("create:rbac")
   addRole(@Body() data: CreateRoleDto) {
     return this.authService.addRole(data);
   }
 
   @Put("role/:id")
   @SchemaResponse(UpdateRoleResponseSchema)
-  @RequirePermissions({
-    action: PermissionAction.UPDATE,
-    resource: PermissionResource.RBAC,
-  })
+  @RequirePermissions("update:rbac")
   updateRole(@Param("id") id: RoleId, @Body() data: UpdateRoleDto) {
     return this.authService.updateRole(id, data);
   }
 
   @Post("role/:id/delete")
   @SchemaResponse(UpdateRoleResponseSchema)
-  @RequirePermissions({
-    action: PermissionAction.DELETE,
-    resource: PermissionResource.RBAC,
-  })
+  @RequirePermissions("delete:rbac")
   deleteRole(@Param("id") id: RoleId) {
     return this.authService.deleteRole(id);
   }
 
   @Post("role/:id/restore")
   @SchemaResponse(UpdateRoleResponseSchema)
-  @RequirePermissions({
-    action: PermissionAction.DELETE,
-    resource: PermissionResource.RBAC,
-  })
+  @RequirePermissions("delete:rbac")
   restoreRole(@Param("id") id: RoleId) {
     return this.authService.restoreRole(id);
   }
@@ -226,45 +195,27 @@ export class AuthController {
 
   @Post("user/role")
   @SchemaResponse(ChangeUserRoleResponseSchema)
-  @RequirePermissions({
-    action: PermissionAction.UPDATE,
-    resource: PermissionResource.RBAC,
-  })
+  @RequirePermissions("update:rbac")
   changeUserRole(@Body() data: ChangeUserRoleDto) {
     return this.authService.assignRole(data.userId, data.roleId);
   }
 
   @Post("user/permission/grant")
-  @RequirePermissions({
-    action: PermissionAction.UPDATE,
-    resource: PermissionResource.RBAC,
-  })
+  @RequirePermissions("update:rbac")
   @SchemaResponse(GrantOrRevokeUserPermissionResponseSchema)
   grantUserpermission(@Body() data: GrantOrRevokeUserPermissionDto) {
-    return this.authService.grantPermissionToUser(
-      data.userId,
-      data.permissionName,
-    );
+    return this.authService.grantPermissionToUser(data.userId, data.string);
   }
 
   @Post("user/permission/revoke")
-  @RequirePermissions({
-    action: PermissionAction.UPDATE,
-    resource: PermissionResource.RBAC,
-  })
+  @RequirePermissions("update:rbac")
   @SchemaResponse(GrantOrRevokeUserPermissionResponseSchema)
   revokeUserpermission(@Body() data: GrantOrRevokeUserPermissionDto) {
-    return this.authService.revokePermissionFromUser(
-      data.userId,
-      data.permissionName,
-    );
+    return this.authService.revokePermissionFromUser(data.userId, data.string);
   }
 
   @Post("user/:id/reset-password")
-  @RequirePermissions({
-    action: PermissionAction.UPDATE,
-    resource: PermissionResource.RBAC,
-  })
+  @RequirePermissions("update:rbac")
   @SchemaResponse(ResetPasswordResponseSchema)
   resetUserPassword(@Param("id") id: UserId) {
     return this.authService.resetPassword(id);

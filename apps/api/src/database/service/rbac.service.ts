@@ -6,7 +6,6 @@ import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { AUTH_ERROR } from "@repo/common/auth.service.type";
 import { ResponseFailed } from "@repo/common/common.type";
-import { PermissionName } from "@repo/common/entity/permission.entity.type";
 import {
   CreateRole,
   RoleId,
@@ -14,6 +13,10 @@ import {
 } from "@repo/common/entity/role.entity.type";
 import { UserPermissionEffect } from "@repo/common/entity/user-permission.entity.type";
 import { UserId } from "@repo/common/entity/user.entity.type";
+import {
+  getActionResourceFromPermissionString,
+  getNameFromPermission,
+} from "@repo/common/util/permission";
 import { paginate, PaginateQuery } from "nestjs-paginate";
 import { Repository } from "typeorm";
 
@@ -32,15 +35,25 @@ export class RBACService {
 
   queryPermission(data: PaginateQuery) {
     return paginate(data, this.permissionRepository, {
-      sortableColumns: ["name", "displayName", "updatedAt", "createdAt"],
-      defaultSortBy: [["name", "ASC"]],
+      sortableColumns: [
+        "resource",
+        "action",
+        "displayName",
+        "updatedAt",
+        "createdAt",
+      ],
+      defaultSortBy: [
+        ["resource", "ASC"],
+        ["action", "ASC"],
+      ],
       filterableColumns: {
-        name: true,
+        resource: true,
+        action: true,
         displayName: true,
       },
       withDeleted: true,
       allowWithDeletedInQuery: true,
-      searchableColumns: ["name", "description", "displayName"],
+      searchableColumns: ["resource", "action", "description", "displayName"],
     });
   }
 
@@ -76,7 +89,7 @@ export class RBACService {
         "user.id": true,
         "user.fullName": true,
         "permission.id": true,
-        "permission.name": true,
+        "permission.displayName": true,
         effect: true,
       },
       relations: ["user", "permission"],
@@ -84,7 +97,7 @@ export class RBACService {
         "user.id",
         "permission.id",
         "user.fullName",
-        "permission.name",
+        "permission.displayName",
       ],
     });
   }
@@ -144,7 +157,8 @@ export class RBACService {
     }
 
     // Get permissions from role
-    const rolePermissions = user.role?.permissions?.map((p) => p.name) || [];
+    const rolePermissions =
+      user.role?.permissions?.map((p) => getNameFromPermission(p)) || [];
 
     // Get user-specific permission overrides
     const userPermissions = await this.userPermissionRepository.find({
@@ -156,27 +170,33 @@ export class RBACService {
     const permissions = new Set(rolePermissions);
     userPermissions.forEach((up) => {
       if (up.effect === UserPermissionEffect.ALLOW) {
-        permissions.add(up.permission.name);
+        permissions.add(getNameFromPermission(up.permission));
       } else {
-        permissions.delete(up.permission.name);
+        permissions.delete(getNameFromPermission(up.permission));
       }
     });
 
     return Array.from(permissions);
   }
 
-  async hasPermission(
-    id: UserId,
-    permissionName: PermissionName,
-  ): Promise<boolean> {
+  async hasPermission(id: UserId, permission: string): Promise<boolean> {
     const permissions = await this.getUserPermissions(id);
-    return permissions.includes(permissionName);
+    return permissions.includes(permission);
   }
 
-  async grantPermission(id: UserId, permissionName: PermissionName) {
+  async grantPermission(id: UserId, permissionString: string) {
     const user = await this.userRepository.findOne({ where: { id: id } });
+    const { action, resource } =
+      getActionResourceFromPermissionString(permissionString);
+
+    if (!action || !resource) {
+      throw new InternalServerErrorException(
+        new ResponseFailed(AUTH_ERROR.PERMISSION_STRING_INVALID),
+      );
+    }
+
     const permission = await this.permissionRepository.findOne({
-      where: { name: permissionName },
+      where: { action, resource },
     });
 
     if (!user)
@@ -208,16 +228,25 @@ export class RBACService {
     return this.userPermissionRepository.findOne({
       where: {
         user: { id },
-        permission: { name: permissionName },
+        permission: { action, resource },
       },
       relations: ["user", "permission"],
     });
   }
 
-  async revokePermission(id: UserId, permissionName: PermissionName) {
+  async revokePermission(id: UserId, permissionString: string) {
     const user = await this.userRepository.findOne({ where: { id: id } });
+    const { action, resource } =
+      getActionResourceFromPermissionString(permissionString);
+
+    if (!action || !resource) {
+      throw new InternalServerErrorException(
+        new ResponseFailed(AUTH_ERROR.PERMISSION_STRING_INVALID),
+      );
+    }
+
     const permission = await this.permissionRepository.findOne({
-      where: { name: permissionName },
+      where: { action, resource },
     });
 
     if (!user)
@@ -249,7 +278,7 @@ export class RBACService {
     return this.userPermissionRepository.findOne({
       where: {
         user: { id },
-        permission: { name: permissionName },
+        permission: { action, resource },
       },
       relations: ["user", "permission"],
     });
@@ -286,6 +315,24 @@ export class RBACService {
       { id },
       { password, resetPassword: false },
     );
+  }
+
+  getPermissionActions() {
+    return this.permissionRepository
+      .createQueryBuilder("p")
+      .select("action")
+      .getRawMany<{ action: string }>();
+  }
+
+  getPermissionResources() {
+    return this.permissionRepository
+      .createQueryBuilder("p")
+      .select("resource")
+      .getRawMany<{ resource: string }>();
+  }
+
+  getAvailablePermissions() {
+    return this.permissionRepository.find();
   }
 
   private findRoleByIdWithPermissions(id: RoleId) {

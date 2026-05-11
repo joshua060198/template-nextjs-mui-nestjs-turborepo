@@ -19,18 +19,13 @@ import {
 } from "@repo/common/auth.service.type";
 import { ResponseFailed, ResponseSuccess } from "@repo/common/common.type";
 import {
-  AllPermissions,
-  PermissionAction,
-  PermissionName,
-  PermissionResource,
-} from "@repo/common/entity/permission.entity.type";
-import {
   CreateRole,
   RoleId,
   UpdateRole,
 } from "@repo/common/entity/role.entity.type";
 import { UserId } from "@repo/common/entity/user.entity.type";
 import { tokenGenerationUtil } from "@repo/common/util/hash";
+import { getNameFromPermission } from "@repo/common/util/permission";
 import * as bcrypt from "bcrypt";
 import { PaginateQuery } from "nestjs-paginate";
 
@@ -130,13 +125,13 @@ export class AuthService {
     return new ResponseSuccess(result);
   }
 
-  async revokePermissionFromUser(id: UserId, permission: PermissionName) {
+  async revokePermissionFromUser(id: UserId, permission: string) {
     const result = await this.rbacService.revokePermission(id, permission);
 
     return new ResponseSuccess(result);
   }
 
-  async grantPermissionToUser(id: UserId, permission: PermissionName) {
+  async grantPermissionToUser(id: UserId, permission: string) {
     const result = await this.rbacService.grantPermission(id, permission);
 
     return new ResponseSuccess(result);
@@ -178,18 +173,20 @@ export class AuthService {
     return new ResponseSuccess(result);
   }
 
-  getPermissionActions() {
-    const result = Object.values(PermissionAction);
-    return new ResponseSuccess(result);
+  async getPermissionActions() {
+    const result = await this.rbacService.getPermissionActions();
+    return new ResponseSuccess(result.map((r) => r.action));
   }
 
-  getPermissionResources() {
-    const result = Object.values(PermissionResource);
-    return new ResponseSuccess(result);
+  async getPermissionResources() {
+    const result = await this.rbacService.getPermissionResources();
+    return new ResponseSuccess(result.map((r) => r.resource));
   }
 
-  getAvailablePermissions() {
-    return new ResponseSuccess(AllPermissions);
+  async getAvailablePermissions() {
+    const result = await this.rbacService.getAvailablePermissions();
+
+    return new ResponseSuccess(result.map((p) => getNameFromPermission(p)));
   }
 
   async resetPassword(id: UserId) {

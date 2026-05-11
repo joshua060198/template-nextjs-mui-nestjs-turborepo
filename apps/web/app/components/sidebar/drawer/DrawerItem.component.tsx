@@ -3,7 +3,6 @@ import { Collapse, Divider, List, ListSubheader } from "@mui/material";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { PermissionName } from "@repo/common/entity/permission.entity.type";
 import { ExpandLessIcon, ExpandMoreIcon } from "@web/components/IconCollection";
 import Link from "@web/components/native/Link";
 import { DrawerItemConfig } from "@web/components/sidebar/drawer/drawer.config";
@@ -23,7 +22,7 @@ export default function DrawerItemComponent({
   config,
 }: {
   config: DrawerItemConfig[];
-  userPermissions: PermissionName[];
+  userPermissions: string[];
 }) {
   const pathname = usePathname();
 
@@ -44,7 +43,7 @@ function DrawerItemTree({
 }: {
   config: DrawerItemConfig[];
   pathname: string;
-  userPermissions: PermissionName[];
+  userPermissions: string[];
 }) {
   const [openMap, setOpenMap] = useState<OpenMap>({});
 
@@ -82,7 +81,7 @@ function DrawerItem({
   pathname: string;
   openMap: OpenMap;
   toggleOpen: (key: string) => void;
-  userPermissions: PermissionName[];
+  userPermissions: string[];
 }) {
   const t = useTranslations("Global.Sidebar.DrawerItem");
   if (item.isAllowed) {

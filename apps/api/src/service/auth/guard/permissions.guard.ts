@@ -10,7 +10,7 @@ import {
 import { Reflector } from "@nestjs/core";
 import { JwtPayload } from "@repo/common/auth.service.type";
 import { GENERAL_ERROR, ResponseFailed } from "@repo/common/common.type";
-import { PermissionConfig } from "@repo/common/entity/permission.entity.type";
+import { getActionResourceFromPermissionString } from "@repo/common/util/permission";
 import { Request } from "express";
 
 @Injectable()
@@ -21,9 +21,10 @@ export class PermissionsGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext) {
-    const requiredPermissions = this.reflector.getAllAndOverride<
-      PermissionConfig[]
-    >(PERMISSIONS_KEY, [context.getHandler(), context.getClass()]);
+    const requiredPermissions = this.reflector.getAllAndOverride<string[]>(
+      PERMISSIONS_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
     if (!requiredPermissions || requiredPermissions.length === 0) {
       return true;
@@ -49,12 +50,12 @@ export class PermissionsGuard implements CanActivate {
     if (userPermissions.includes("manage:system")) return true;
 
     const passed = requiredPermissions.every((p) => {
-      if (p === "open:admin_page") return true;
-      else if (p === "manage:system") return userPermissions.includes(p);
+      const { action, resource } = getActionResourceFromPermissionString(p);
+      if (!action || !resource) return false;
       else {
         return (
-          userPermissions.includes(`${p.action}:${p.resource}`) ||
-          userPermissions.includes(`manage:${p.resource}`)
+          userPermissions.includes(`${action}:${resource}`) ||
+          userPermissions.includes(`manage:${resource}`)
         );
       }
     });

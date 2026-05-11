@@ -3,23 +3,27 @@ import { BaseUUIDEntity } from "@api/database/entity/uuid-pk.base";
 import {
   BackendPermission,
   PermissionId,
-  type PermissionName,
 } from "@repo/common/entity/permission.entity.type";
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToMany,
+  Unique,
   UpdateDateColumn,
 } from "typeorm";
 
 @Entity("permission")
+@Unique(["action", "resource"])
 export class PermissionEntity
   extends BaseUUIDEntity<PermissionId>
   implements BackendPermission
 {
-  @Column({ unique: true })
-  name: PermissionName;
+  @Column()
+  resource: string;
+
+  @Column()
+  action: string;
 
   @Column()
   displayName: string;

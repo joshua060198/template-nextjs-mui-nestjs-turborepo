@@ -123,7 +123,8 @@
         "01006": "There is error when updating your password. Please try again later or contact our customer support.",
         "01007": "Permission does not exist! Please check again or contact our customer support",
         "01008": "Role does not exist! Please check again or contact our customer support",
-        "01009": "There is error when creating role. Please try again later or contact our customer support."
+        "01009": "There is error when creating role. Please try again later or contact our customer support.",
+        "01010": "Permission string is invalid. Please try again later or contact our customer support."
       },
       "Form": {
         "RegisterSuccess": "User successfully created!",

@@ -1,9 +1,5 @@
 "use client";
 import {
-  PermissionName,
-  PermissionResource,
-} from "@repo/common/entity/permission.entity.type";
-import {
   AdminPanelSettingsIcon,
   HomeIcon,
   PeopleIcon,
@@ -17,7 +13,7 @@ export interface DrawerItemConfig {
   path?: string;
   icon?: ReactNode;
   type?: "section";
-  isAllowed?: (userPermission: PermissionName[]) => boolean;
+  isAllowed?: (userPermission: string[]) => boolean;
   children?: DrawerItemConfig[];
 }
 
@@ -68,12 +64,7 @@ export const adminSidebarConfig: DrawerItemConfig[] =
     },
     {
       label: "RBAC.Title",
-      isAllowed: (userPermission) =>
-        userPermission.filter(
-          (p) =>
-            p.includes(PermissionResource.USER) ||
-            p.includes(PermissionResource.RBAC),
-        ).length > 0,
+      isAllowed: isAllowedForRBACManagementPage,
       type: "section",
     },
     {

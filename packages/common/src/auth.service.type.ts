@@ -4,11 +4,7 @@ import {
   createSuccessResponseSchema,
   ErrorCode,
 } from "./common.type.js";
-import {
-  AllPermissions,
-  FrontendPermissionSchema,
-  PermissionName,
-} from "./entity/permission.entity.type.js";
+import { FrontendPermissionSchema } from "./entity/permission.entity.type.js";
 import { BasicRole, FrontendRoleSchema } from "./entity/role.entity.type.js";
 import { BackendUserPermissionSchema } from "./entity/user-permission.entity.type.js";
 import {
@@ -60,6 +56,10 @@ export const AUTH_ERROR = {
   ),
   ROLE_NOT_FOUND: new AuthError("008", "Can't find role with that name or id."),
   CREATE_ROLE_FAILED: new AuthError("009", "Failed to create role"),
+  PERMISSION_STRING_INVALID: new AuthError(
+    "010",
+    "Permission string is invalid.",
+  ),
 };
 
 export class UnauthorizedError extends ErrorCode {
@@ -117,7 +117,7 @@ export const MeResponseFrontendSchema = createSuccessResponseSchema(
       zod
         .string()
         .required()
-        .transform((v) => v as PermissionName),
+        .transform((v) => v as string),
     ),
   }),
 );
@@ -172,7 +172,7 @@ export type ChangeUserRoleResponse = z.infer<
 >;
 
 export const GrantOrRevokeUserPermissionSchema = zod.object({
-  permissionName: zod.enum(AllPermissions),
+  string: zod.string().required(),
   userId: brandedUUIDId<"UserId">(),
 });
 

@@ -62,6 +62,12 @@ export default function middleware(request: NextRequest) {
    */
   if (isAuthenticated && isAuthRoute) {
     const redirectUrl = request.nextUrl.clone();
+    const redirect = redirectUrl.searchParams.get("redirect");
+    if (redirect) {
+      redirectUrl.pathname = `/${locale}${redirect}`;
+    } else {
+      redirectUrl.pathname = `/${locale}${DEFAULT_AUTH_REDIRECT}`;
+    }
     redirectUrl.pathname = `/${locale}${DEFAULT_AUTH_REDIRECT}`;
     return NextResponse.redirect(redirectUrl);
   }
