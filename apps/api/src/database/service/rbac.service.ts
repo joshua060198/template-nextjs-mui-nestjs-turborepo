@@ -7,6 +7,10 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { AUTH_ERROR } from "@repo/common/auth.service.type";
 import { ResponseFailed } from "@repo/common/common.type";
 import {
+  CreatePermission,
+  UpdatePermission,
+} from "@repo/common/entity/permission.entity.type";
+import {
   CreateRole,
   RoleId,
   UpdateRole,
@@ -321,6 +325,7 @@ export class RBACService {
     return this.permissionRepository
       .createQueryBuilder("p")
       .select("action")
+      .distinct(true)
       .getRawMany<{ action: string }>();
   }
 
@@ -328,7 +333,25 @@ export class RBACService {
     return this.permissionRepository
       .createQueryBuilder("p")
       .select("resource")
+      .distinct(true)
       .getRawMany<{ resource: string }>();
+  }
+
+  async createPermission(data: CreatePermission) {
+    const newData = await this.permissionRepository.save(
+      this.permissionRepository.create(data),
+    );
+    return this.permissionRepository.findOne({ where: { id: newData.id } });
+  }
+
+  async updatePermission(data: UpdatePermission) {
+    await this.permissionRepository.update(
+      {
+        id: data.id,
+      },
+      data,
+    );
+    return this.permissionRepository.findOne({ where: { id: data.id } });
   }
 
   getAvailablePermissions() {

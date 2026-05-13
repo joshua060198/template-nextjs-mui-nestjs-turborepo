@@ -60,6 +60,7 @@ export const AUTH_ERROR = {
     "010",
     "Permission string is invalid.",
   ),
+  CREATE_PERMISSION_FAILED: new AuthError("011", "Failed to create permission"),
 };
 
 export class UnauthorizedError extends ErrorCode {
@@ -219,4 +220,15 @@ export const QueryResponsePermissionSchema = createPaginatedSchema(
 );
 export type QueryResponsePermission = z.infer<
   typeof QueryResponsePermissionSchema
+>;
+
+export const CreateUpdatePermissionResponseSchema = createSuccessResponseSchema(
+  BackendPermissionSchema,
+);
+
+const CreateUpdatePermissionResponseFrontendSchema =
+  createSuccessResponseSchema(FrontendPermissionSchema);
+
+export type CreateUpdatePermissionResponse = z.infer<
+  typeof CreateUpdatePermissionResponseFrontendSchema
 >;

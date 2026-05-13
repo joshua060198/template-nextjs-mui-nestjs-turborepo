@@ -3,10 +3,12 @@ import { LoginActivityInterceptor } from "@api/interceptor/login-activity.interc
 import {
   ChangePasswordDto,
   ChangeUserRoleDto,
+  CreatePermissionDto,
   CreateRoleDto,
   GrantOrRevokeUserPermissionDto,
   LoginDto,
   RegisterUserDto,
+  UpdatePermissionDto,
   UpdateRoleDto,
 } from "@api/service/auth/auth.dto";
 import { AuthService } from "@api/service/auth/auth.service";
@@ -19,6 +21,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Put,
   Res,
@@ -27,6 +30,7 @@ import {
 import { ConfigService } from "@nestjs/config";
 import {
   ChangeUserRoleResponseSchema,
+  CreateUpdatePermissionResponseSchema,
   GrantOrRevokeUserPermissionResponseSchema,
   type JwtPayload,
   LoginResponseSchema,
@@ -228,5 +232,17 @@ export class AuthController {
     @Body() data: ChangePasswordDto,
   ) {
     return this.authService.changePassword(user.sub, data.password);
+  }
+
+  @Post("permission")
+  @SchemaResponse(CreateUpdatePermissionResponseSchema)
+  createPermission(@Body() data: CreatePermissionDto) {
+    return this.authService.createPermission(data);
+  }
+
+  @Patch("permission")
+  @SchemaResponse(CreateUpdatePermissionResponseSchema)
+  updatePermission(@Body() data: UpdatePermissionDto) {
+    return this.authService.updatePermission(data);
   }
 }

@@ -2,46 +2,6 @@ import z from "zod";
 import { BrandedId, brandedUUIDId, zod } from "../util/zod.js";
 
 export type PermissionId = BrandedId<"PermissionId">;
-// export enum PermissionAction {
-//   CREATE = "create",
-//   READ = "read",
-//   UPDATE = "update",
-//   DELETE = "delete",
-//   MANAGE = "manage",
-// }
-// export enum PermissionResource {
-//   USER = "user",
-//   RBAC = "rbac",
-// }
-//
-// export type string =
-//   | `${PermissionAction}:${PermissionResource}`
-//   | "manage:system"
-//   | "open:admin_page";
-//
-// // Generate "action:resource"
-// const permissionCombinations: string[] = Object.values(
-//   PermissionAction,
-// ).flatMap((action) =>
-//   Object.values(PermissionResource).map(
-//     (resource) => `${action}:${resource}` as const,
-//   ),
-// );
-//
-// // Add special case
-// export const AllPermissions = [
-//   ...permissionCombinations,
-//   "manage:system",
-//   "open:admin_page",
-// ] as const;
-//
-// export type PermissionConfig =
-//   | {
-//       action: PermissionAction;
-//       resource: PermissionResource;
-//     }
-//   | "manage:system"
-//   | "open:admin_page";
 
 export const BasicPermissionSchema = zod.object({
   id: brandedUUIDId<"PermissionId">(),
@@ -74,10 +34,11 @@ export const CreatePermissionSchema = BasicPermissionSchema.pick({
 
 export type CreatePermission = z.infer<typeof CreatePermissionSchema>;
 
-export const UpdatePermissionSchema = BasicPermissionSchema.pick({
-  resource: true,
-  action: true,
+export const UpdatePermissionSchema = CreatePermissionSchema.pick({
+  displayName: true,
   description: true,
-}).partial();
+}).extend({
+  id: brandedUUIDId<"PermissionId">(),
+});
 
 export type UpdatePermission = z.infer<typeof UpdatePermissionSchema>;

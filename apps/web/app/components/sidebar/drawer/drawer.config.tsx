@@ -5,7 +5,8 @@ import {
   PeopleIcon,
   VerifiedUserIcon,
 } from "@web/components/IconCollection";
-import { isAllowedForRBACManagementPage } from "@web/libs/utils/permission.util";
+import { isAllowed } from "@web/libs/utils/permission.util";
+import RBACPermission from "@web/libs/utils/permission/rbac.permission.util";
 import { ReactNode } from "react";
 
 export interface DrawerItemConfig {
@@ -64,31 +65,29 @@ export const adminSidebarConfig: DrawerItemConfig[] =
     },
     {
       label: "RBAC.Title",
-      isAllowed: isAllowedForRBACManagementPage,
+      isAllowed: (userPermission) =>
+        isAllowed(userPermission, RBACPermission.Manage, RBACPermission.Read),
       type: "section",
     },
     {
       label: "RBAC.UserManagement",
       path: "rbac/user-management",
       icon: <PeopleIcon fontSize="small" />,
-      isAllowed: isAllowedForRBACManagementPage,
+      isAllowed: (userPermission) =>
+        isAllowed(userPermission, RBACPermission.Manage, RBACPermission.Read),
     },
     {
       label: "RBAC.Role",
       path: "rbac/role",
       icon: <AdminPanelSettingsIcon fontSize="small" />,
-      isAllowed: isAllowedForRBACManagementPage,
+      isAllowed: (userPermission) =>
+        isAllowed(userPermission, RBACPermission.Manage, RBACPermission.Read),
     },
     {
       label: "RBAC.Permission",
       path: "rbac/permission",
       icon: <VerifiedUserIcon fontSize="small" />,
-      isAllowed: isAllowedForRBACManagementPage,
+      isAllowed: (userPermission) =>
+        isAllowed(userPermission, RBACPermission.Manage, RBACPermission.Read),
     },
-    // {
-    //   label: "BasicConfiguration.SchoolYear",
-    //   path: "school-year",
-    //   icon: <EventIcon fontSize="small" />,
-    //   // isAllowed: () =>  //optional permission check
-    // },
   ]);

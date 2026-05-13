@@ -1,9 +1,10 @@
 "use client";
 import { Button, Container, Typography } from "@mui/material";
-import { PermissionAction } from "@repo/common/entity/permission.entity.type";
 import GlobalLoadingComponent from "@web/components/GlobalLoading.component";
 import { ArrowBackwardIosIcon } from "@web/components/IconCollection";
 import { useAuth, useLogout } from "@web/libs/hooks/api/auth.api.hooks";
+import { isAllowed } from "@web/libs/utils/permission.util";
+import SystemPermission from "@web/libs/utils/permission/system.permission.util";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -38,7 +39,7 @@ export default function AdminProvider({ children }: { children: ReactNode }) {
     return null;
   }
 
-  if (user.permissions.find((i) => i.includes(PermissionAction.MANAGE))) {
+  if (isAllowed(user.permissions, SystemPermission.OpenAdminPage)) {
     return <>{children}</>;
   }
 

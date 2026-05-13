@@ -36,7 +36,8 @@ export default function UserManagementTableComponent() {
   });
   const t = useTranslations("Page.Admin.RBAC.UserManagement");
   const roleCell = createLinkCell<UserFrontend>({
-    constructLink: (val, rowData) => `/admin/role?name=${rowData.role.name}`,
+    constructLink: (val, rowData) =>
+      `/admin/rbac/role?name=${rowData.role.name}`,
   });
   const { dialogConfirm } = useDialog();
 

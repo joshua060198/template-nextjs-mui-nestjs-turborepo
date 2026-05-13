@@ -138,7 +138,9 @@
         "CreateRoleSuccess": "Role successfully created.",
         "UpdateRoleSuccess": "Role successfully updated.",
         "DeleteRoleSuccess": "Role successfully deleted.",
-        "RestoreRoleSuccess": "Role successfully restored."
+        "RestoreRoleSuccess": "Role successfully restored.",
+        "CreatePermissionSuccess": "Permission successfully created.",
+        "UpdatePermissionSuccess": "Permission successfully updated."
       }
     },
     "User": {
@@ -373,14 +375,15 @@
               "ManageSystem": "Manage System",
               "Resources": {
                 "user": "User",
-                "rbac": "RBAC"
+                "rbac": "RBAC",
+                "system": "System",
+                "admin_page": "Admin Page"
               },
               "Title": "Edit Permissions",
               "FormTitle": "Edit Permissions for {user}",
               "Allow": "Allow ?",
               "Manage": {
-                "Label": "Manage (all actions)",
-                "SubLabel": "Includes read, create, update, and delete"
+                "Label": "Manage (all actions)"
               }
             }
           },
@@ -450,8 +453,11 @@
           "Title": "Permission",
           "EntityName": "Permission",
           "Table": {
-            "Name": {
-              "Header": "Name"
+            "Action": {
+              "Header": "Action"
+            },
+            "Resource": {
+              "Header": "Resource"
             },
             "DisplayName": {
               "Header": "Display Name"

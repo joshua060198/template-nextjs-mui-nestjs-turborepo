@@ -290,3 +290,25 @@ export function useUserPermissions(id: UserId) {
     staleTime: 10 * 60 * 1000,
   });
 }
+
+export function useCreatePermission() {
+  return useMutation({
+    mutationKey: ["create-permission"],
+    mutationFn: createPermission,
+    onSuccess: useHandleAuthSuccess("Form.CreatePermissionSuccess", [
+      "permissions",
+    ]),
+    onError: useHandleAuthError(),
+  });
+}
+
+export function useUpdatePermission() {
+  return useMutation({
+    mutationKey: ["update-permission"],
+    mutationFn: updatePermission,
+    onSuccess: useHandleAuthSuccess("Form.UpdatePermissionSuccess", [
+      "permissions",
+    ]),
+    onError: useHandleAuthError(),
+  });
+}

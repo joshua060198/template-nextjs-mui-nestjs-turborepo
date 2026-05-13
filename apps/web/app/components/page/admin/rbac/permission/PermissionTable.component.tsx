@@ -1,6 +1,7 @@
 "use client";
 import { FrontendPermission } from "@repo/common/entity/permission.entity.type";
 import Table from "@web/components/native/table/Table";
+import AddEditPermissionForm from "@web/components/page/admin/rbac/permission/AddEditPermission.form";
 import { usePermissionQuery } from "@web/libs/hooks/api/auth.api.hooks";
 import { ColumnDef } from "@web/libs/table/types";
 import { useTranslations } from "next-intl";
@@ -36,6 +37,12 @@ export default function PermissionTableComponent() {
         }}
         queryFn={usePermissionQuery}
         entityName={t("EntityName")}
+        addForm={{
+          FormComponent: AddEditPermissionForm,
+        }}
+        editForm={{
+          FormComponent: AddEditPermissionForm,
+        }}
       />
     </>
   );

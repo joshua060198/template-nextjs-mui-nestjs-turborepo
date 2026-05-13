@@ -71,8 +71,6 @@ export function DialogProvider({ children }: { children: ReactNode }) {
     close();
   };
 
-  console.log(options);
-
   return (
     <DialogContext.Provider
       value={{ dialogConfirm: confirm, dialogAlert: alert }}

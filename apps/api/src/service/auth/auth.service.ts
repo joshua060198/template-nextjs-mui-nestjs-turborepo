@@ -19,6 +19,10 @@ import {
 } from "@repo/common/auth.service.type";
 import { ResponseFailed, ResponseSuccess } from "@repo/common/common.type";
 import {
+  CreatePermission,
+  UpdatePermission,
+} from "@repo/common/entity/permission.entity.type";
+import {
   CreateRole,
   RoleId,
   UpdateRole,
@@ -205,6 +209,18 @@ export class AuthService {
 
   async getUserPermissions(id: UserId) {
     const result = await this.rbacService.getUserPermissions(id);
+    return new ResponseSuccess(result);
+  }
+
+  async createPermission(data: CreatePermission) {
+    const result = await this.rbacService.createPermission(data);
+    throwIfNull(result, AUTH_ERROR.CREATE_PERMISSION_FAILED);
+    return new ResponseSuccess(result);
+  }
+
+  async updatePermission(data: UpdatePermission) {
+    const result = await this.rbacService.updatePermission(data);
+    throwIfNull(result, AUTH_ERROR.CREATE_PERMISSION_FAILED);
     return new ResponseSuccess(result);
   }
 

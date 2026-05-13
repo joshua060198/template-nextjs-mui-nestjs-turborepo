@@ -1,14 +1,10 @@
 import { Divider, Stack, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import {
-  PermissionAction,
-  PermissionResource,
-} from "@repo/common/entity/permission.entity.type";
 import { UserId } from "@repo/common/entity/user.entity.type";
 import { Checkbox } from "@web/components/native/form/Checkbox";
 import {
+  useAllAvailablePermissions,
   useGrantUserPermission,
-  usePermissionActions,
   usePermissionResources,
   useRevokeUserPermission,
   useUserPermissions,
@@ -17,9 +13,16 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 interface PermissionGroup {
-  resource: PermissionResource;
-  actions: Record<PermissionAction, boolean>;
+  resource: string;
+  actions: Record<string, boolean>;
 }
+
+const parseResourceStringToPrettyString = (value: string) => {
+  return value
+    .split("_")
+    .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+    .join(" ");
+};
 
 /**
  * Parse flat permission list into grouped structure
@@ -28,46 +31,24 @@ interface PermissionGroup {
  */
 const parsePermissions = (
   permissions: string[],
-): Record<PermissionResource, PermissionGroup> => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const groups: Record<PermissionResource, PermissionGroup> = {};
+): Record<string, PermissionGroup> => {
+  const groups: Record<string, PermissionGroup> = {};
 
   permissions.forEach((perm) => {
     const splittedPerm = perm.split(":");
-    const action = splittedPerm[0] as PermissionAction;
-    const resource = splittedPerm[1] as PermissionResource;
+    const action = splittedPerm[0];
+    const resource = splittedPerm[1];
+    console.log(splittedPerm);
 
-    if (!resource) return;
+    if (!resource || !action) return;
 
-    if (perm === "open:admin_page" || perm === "manage:system") {
+    if (groups[resource]) {
+      groups[resource].actions[action] = true;
+    } else {
       groups[resource] = {
         resource,
-        actions: {
-          manage: true,
-          create: false,
-          read: false,
-          update: false,
-          delete: false,
-        },
+        actions: { [action]: true },
       };
-    } else {
-      if (!groups[resource]) {
-        groups[resource] = {
-          resource,
-          actions: {
-            manage: false,
-            create: false,
-            read: false,
-            update: false,
-            delete: false,
-          },
-        };
-      }
-
-      if (action in groups[resource].actions) {
-        groups[resource].actions[action] = true;
-      }
     }
   });
 
@@ -78,29 +59,14 @@ const parsePermissions = (
  * Convert grouped structure back to flat permission list
  */
 const flattenPermissions = (
-  groups: Record<PermissionResource, PermissionGroup>,
+  groups: Record<string, PermissionGroup>,
 ): string[] => {
   const permissions: string[] = [];
 
   Object.values(groups).forEach(({ resource, actions }) => {
-    if (resource === ("system" as PermissionResource)) {
-      if (actions.manage) permissions.push("manage:system");
-    } else if (resource === ("admin_page" as PermissionResource)) {
-      if (actions.manage) permissions.push("open:admin_page");
-    } else {
-      if (actions.manage) {
-        permissions.push(`${PermissionAction.MANAGE}:${resource}`);
-      } else {
-        if (actions.create)
-          permissions.push(`${PermissionAction.CREATE}:${resource}`);
-        if (actions.read)
-          permissions.push(`${PermissionAction.READ}:${resource}`);
-        if (actions.update)
-          permissions.push(`${PermissionAction.UPDATE}:${resource}`);
-        if (actions.delete)
-          permissions.push(`${PermissionAction.DELETE}:${resource}`);
-      }
-    }
+    Object.entries(actions).forEach(([action, val]) => {
+      if (val) permissions.push(`${action}:${resource}`);
+    });
   });
 
   return permissions;
@@ -112,12 +78,16 @@ export default function EditPermissionForm({
   selectedUser: UserId;
 }) {
   const { data } = useUserPermissions(selectedUser);
+  const { data: permissionList } = useAllAvailablePermissions();
   const { data: resourceList } = usePermissionResources();
-  const { data: actionList } = usePermissionActions();
   const t = useTranslations("Page.Admin.RBAC.UserManagement.Form.Permissions");
 
-  const [permissionGroups, setPermissionGroups] = useState<
-    Record<PermissionResource, PermissionGroup>
+  const [allPermissionGroups, setAllPermissionGroups] = useState<
+    Record<string, PermissionGroup>
+  >(() => parsePermissions(permissionList ?? []));
+
+  const [userPermissionGroups, setUserPermissionGroups] = useState<
+    Record<string, PermissionGroup>
   >(() => parsePermissions(data ?? []));
 
   const { mutate: revoke, isPending: loadingRevoke } =
@@ -126,158 +96,19 @@ export default function EditPermissionForm({
   const { mutate: grant, isPending: loadingGrant } = useGrantUserPermission();
 
   useEffect(() => {
-    setPermissionGroups(parsePermissions(data ?? []));
+    setUserPermissionGroups(parsePermissions(data ?? []));
   }, [data]);
 
-  console.log(permissionGroups);
+  useEffect(() => {
+    setAllPermissionGroups(parsePermissions(permissionList ?? []));
+  }, [permissionList]);
+
   return (
     <>
       <Typography variant="body2" color="textSecondary">
         Override specific permissions from the user's role. Selecting "manage"
         grants all actions (create, view, update, delete) for that resource.
       </Typography>
-
-      <Box key="open_admin_page">
-        <Stack spacing={1.5}>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Typography
-              variant="subtitle2"
-              sx={{
-                textTransform: "capitalize",
-                fontWeight: 600,
-                color: "textPrimary",
-              }}
-            >
-              {t(`OpenAdmin`)}
-            </Typography>
-          </Box>
-
-          {/* Manage Permission */}
-          <Checkbox
-            onChange={(e, checked) => {
-              setPermissionGroups((prev) => {
-                const newData = { ...prev };
-                if (newData["admin_page" as PermissionResource]) {
-                  newData["admin_page" as PermissionResource].actions.manage =
-                    checked;
-                } else {
-                  newData["admin_page" as PermissionResource] = {
-                    resource: "admin_page" as PermissionResource,
-                    actions: {
-                      manage: checked,
-                      create: false,
-                      read: false,
-                      update: false,
-                      delete: false,
-                    },
-                  };
-                }
-                return newData;
-              });
-              if (checked) {
-                grant({
-                  string: "open:admin_page",
-                  userId: selectedUser,
-                });
-              } else {
-                revoke({
-                  string: "open:admin_page",
-                  userId: selectedUser,
-                });
-              }
-            }}
-            disabled={loadingRevoke || loadingGrant}
-            checked={
-              permissionGroups["admin_page" as PermissionResource]?.actions
-                ?.manage ?? false
-            }
-            label={
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                  {t("Allow")}
-                </Typography>
-              </Box>
-            }
-          />
-        </Stack>
-      </Box>
-
-      <Box key="manage_system">
-        <Stack spacing={1.5}>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Typography
-              variant="subtitle2"
-              sx={{
-                textTransform: "capitalize",
-                fontWeight: 600,
-                color: "textPrimary",
-              }}
-            >
-              {t(`ManageSystem`)}
-            </Typography>
-          </Box>
-
-          {/* Manage Permission */}
-          <Checkbox
-            onChange={(e, checked) => {
-              setPermissionGroups((prev) => {
-                const newData = { ...prev };
-                if (newData["system" as PermissionResource]) {
-                  newData["system" as PermissionResource].actions.manage =
-                    checked;
-                } else {
-                  newData["system" as PermissionResource] = {
-                    resource: "system" as PermissionResource,
-                    actions: {
-                      manage: checked,
-                      create: false,
-                      read: false,
-                      update: false,
-                      delete: false,
-                    },
-                  };
-                }
-                return newData;
-              });
-              if (checked) {
-                grant({
-                  string: "manage:system",
-                  userId: selectedUser,
-                });
-              } else {
-                revoke({
-                  string: "manage:system",
-                  userId: selectedUser,
-                });
-              }
-            }}
-            disabled={loadingRevoke || loadingGrant}
-            checked={
-              permissionGroups["system" as PermissionResource]?.actions
-                ?.manage ?? false
-            }
-            label={
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                  {t("Allow")}
-                </Typography>
-              </Box>
-            }
-          />
-        </Stack>
-      </Box>
 
       {resourceList?.map((resource, index) => {
         return (
@@ -301,60 +132,69 @@ export default function EditPermissionForm({
                     color: "textPrimary",
                   }}
                 >
-                  {t(`Resources.${resource}`)}
+                  {parseResourceStringToPrettyString(resource)}
                 </Typography>
               </Box>
 
               {/* Manage Permission */}
-              <Checkbox
-                onChange={(e, checked) => {
-                  setPermissionGroups((prev) => {
-                    const newData = { ...prev };
-                    if (newData[resource]) {
-                      newData[resource].actions.manage = checked;
-                    } else {
-                      newData[resource] = {
-                        resource,
-                        actions: {
-                          manage: checked,
-                          create: false,
-                          read: false,
-                          update: false,
-                          delete: false,
-                        },
-                      };
+              {allPermissionGroups[resource] &&
+                Object.keys(allPermissionGroups[resource].actions).includes(
+                  "manage",
+                ) && (
+                  <Checkbox
+                    onChange={(e, checked) => {
+                      setUserPermissionGroups((prev) => {
+                        const newData = { ...prev };
+                        if (newData[resource]) {
+                          newData[resource].actions.manage = checked;
+                        } else {
+                          newData[resource] = {
+                            resource,
+                            actions: {
+                              manage: checked,
+                            },
+                          };
+                        }
+                        return newData;
+                      });
+                      if (checked) {
+                        grant({
+                          string: `manage:${resource}`,
+                          userId: selectedUser,
+                        });
+                      } else {
+                        revoke({
+                          string: `manage:${resource}`,
+                          userId: selectedUser,
+                        });
+                      }
+                    }}
+                    disabled={loadingRevoke || loadingGrant}
+                    checked={
+                      userPermissionGroups[resource]?.actions?.manage ?? false
                     }
-                    return newData;
-                  });
-                  if (checked) {
-                    grant({
-                      string: `manage:${resource}`,
-                      userId: selectedUser,
-                    });
-                  } else {
-                    revoke({
-                      string: `manage:${resource}`,
-                      userId: selectedUser,
-                    });
-                  }
-                }}
-                disabled={loadingRevoke || loadingGrant}
-                checked={permissionGroups[resource]?.actions?.manage ?? false}
-                label={
-                  <Box>
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {t("Manage.Label")}
-                    </Typography>
-                    <Typography variant="caption" color="textSecondary">
-                      {t("Manage.SubLabel")}
-                    </Typography>
-                  </Box>
-                }
-              />
+                    label={
+                      <Box>
+                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                          {t("Manage.Label")}
+                        </Typography>
+                      </Box>
+                    }
+                  />
+                )}
 
               {/* Individual Actions - only show if manage is NOT selected */}
-              {!permissionGroups[resource]?.actions?.manage && (
+              {!userPermissionGroups[resource]?.actions?.manage && (
                 <Box
+                  id={
+                    allPermissionGroups[resource]
+                      ? JSON.stringify(
+                          Object.entries(allPermissionGroups[resource].actions),
+                          null,
+                          3,
+                        )
+                      : undefined
+                  }
                   sx={{
                     ml: 2,
                     pl: 2,
@@ -365,50 +205,56 @@ export default function EditPermissionForm({
                     gap: 1,
                   }}
                 >
-                  {actionList
-                    ?.filter((action) => action !== "manage")
-                    .map((action) => (
-                      <Checkbox
-                        key={action + resource}
-                        checked={
-                          permissionGroups[resource]?.actions[action] ?? false
-                        }
-                        disabled={loadingRevoke || loadingGrant}
-                        label={t(`Actions.${action}`)}
-                        onChange={(e, checked) => {
-                          setPermissionGroups((prev) => {
-                            const newData = { ...prev };
-                            if (newData[resource]) {
-                              newData[resource].actions[action] = checked;
-                            } else {
-                              newData[resource] = {
-                                resource,
-                                actions: {
-                                  manage: false,
-                                  create: false,
-                                  read: false,
-                                  update: false,
-                                  delete: false,
-                                },
-                              };
-                              newData[resource].actions[action] = checked;
-                            }
-                            return newData;
-                          });
-                          if (checked) {
-                            grant({
-                              string: `${action}:${resource}`,
-                              userId: selectedUser,
-                            });
-                          } else {
-                            revoke({
-                              string: `${action}:${resource}`,
-                              userId: selectedUser,
-                            });
+                  {allPermissionGroups[resource] &&
+                    Object.entries(allPermissionGroups[resource].actions)
+                      ?.filter(([action]) => action !== "manage")
+                      .map(([action]) => (
+                        <Checkbox
+                          key={action + resource}
+                          checked={
+                            userPermissionGroups[resource]?.actions[action] ??
+                            false
                           }
-                        }}
-                      />
-                    ))}
+                          disabled={loadingRevoke || loadingGrant}
+                          label={
+                            <Typography variant="body2">
+                              {parseResourceStringToPrettyString(action)}
+                            </Typography>
+                          }
+                          onChange={(e, checked) => {
+                            setUserPermissionGroups((prev) => {
+                              const newData = { ...prev };
+                              if (newData[resource]) {
+                                newData[resource].actions[action] = checked;
+                              } else {
+                                newData[resource] = {
+                                  resource,
+                                  actions: {
+                                    manage: false,
+                                    create: false,
+                                    read: false,
+                                    update: false,
+                                    delete: false,
+                                  },
+                                };
+                                newData[resource].actions[action] = checked;
+                              }
+                              return newData;
+                            });
+                            if (checked) {
+                              grant({
+                                string: `${action}:${resource}`,
+                                userId: selectedUser,
+                              });
+                            } else {
+                              revoke({
+                                string: `${action}:${resource}`,
+                                userId: selectedUser,
+                              });
+                            }
+                          }}
+                        />
+                      ))}
                 </Box>
               )}
             </Stack>

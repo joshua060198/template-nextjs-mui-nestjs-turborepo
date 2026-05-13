@@ -209,3 +209,19 @@ export const getPermissionResources = async () => {
   );
   return res.data.data;
 };
+
+export const createPermission = async (data: CreatePermission) => {
+  const res = await api.post<CreateUpdatePermissionResponse>(
+    `${AUTH_API_VERSION}/${AUTH_PREFIX}/permission`,
+    data,
+  );
+  return res.data.data;
+};
+
+export const updatePermission = async (data: UpdatePermission) => {
+  const res = await api.patch<CreateUpdatePermissionResponse>(
+    `${AUTH_API_VERSION}/${AUTH_PREFIX}/permission`,
+    data,
+  );
+  return res.data.data;
+};
