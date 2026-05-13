@@ -9,6 +9,7 @@ class RBACPermissionUtil extends PermissionUtil {
   }
 
   Delete: PermissionCheckerFn = (permissions) =>
+    this.Manage(permissions) ||
     permissions.some((p) => p === `delete:${this.resource}`);
 }
 

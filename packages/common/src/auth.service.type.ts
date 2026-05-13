@@ -4,7 +4,10 @@ import {
   createSuccessResponseSchema,
   ErrorCode,
 } from "./common.type.js";
-import { FrontendPermissionSchema } from "./entity/permission.entity.type.js";
+import {
+  BackendPermissionSchema,
+  FrontendPermissionSchema,
+} from "./entity/permission.entity.type.js";
 import { BasicRole, FrontendRoleSchema } from "./entity/role.entity.type.js";
 import { BackendUserPermissionSchema } from "./entity/user-permission.entity.type.js";
 import {

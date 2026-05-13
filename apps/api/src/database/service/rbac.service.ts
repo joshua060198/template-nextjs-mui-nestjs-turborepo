@@ -326,15 +326,29 @@ export class RBACService {
       .createQueryBuilder("p")
       .select("action")
       .distinct(true)
+      .orderBy("action", "ASC")
       .getRawMany<{ action: string }>();
   }
 
   getPermissionResources() {
     return this.permissionRepository
       .createQueryBuilder("p")
-      .select("resource")
-      .distinct(true)
+      .select("p.resource", "resource")
+      .addSelect("MAX(CAST(p.isSystem AS INT))", "isSystem")
+      .groupBy("p.resource")
+      .orderBy("MAX(CAST(p.isSystem AS INT))", "DESC")
+      .addOrderBy("p.resource", "ASC")
       .getRawMany<{ resource: string }>();
+  }
+
+  getAvailablePermissions() {
+    return this.permissionRepository.find({
+      order: {
+        isSystem: "DESC",
+        resource: "ASC",
+        action: "ASC",
+      },
+    });
   }
 
   async createPermission(data: CreatePermission) {
@@ -352,10 +366,6 @@ export class RBACService {
       data,
     );
     return this.permissionRepository.findOne({ where: { id: data.id } });
-  }
-
-  getAvailablePermissions() {
-    return this.permissionRepository.find();
   }
 
   private findRoleByIdWithPermissions(id: RoleId) {

@@ -19,6 +19,9 @@ export class PermissionEntity
   extends BaseUUIDEntity<PermissionId>
   implements BackendPermission
 {
+  @Column({ type: "bool", default: false })
+  isSystem: boolean;
+
   @Column()
   resource: string;
 

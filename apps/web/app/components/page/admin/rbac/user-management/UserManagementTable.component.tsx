@@ -39,7 +39,7 @@ export default function UserManagementTableComponent() {
     constructLink: (val, rowData) =>
       `/admin/rbac/role?name=${rowData.role.name}`,
   });
-  const { dialogConfirm } = useDialog();
+  const { dialogConfirm, dialogAlert } = useDialog();
 
   const { data: { data: roles = [] } = {} } = useRoleQuery();
 
@@ -122,8 +122,15 @@ export default function UserManagementTableComponent() {
                       content: t("Table.ResetPassword.DialogContent", {
                         user: row.original.username,
                       }),
-                      onPositive: async () => {
-                        await resetPassword(row.original.id);
+                      onPositive: () => {
+                        resetPassword(row.original.id).then((newPassword) => {
+                          dialogAlert({
+                            title: t("Form.Password.DialogTitle"),
+                            content: t("Form.Password.DialogContent", {
+                              password: newPassword,
+                            }),
+                          });
+                        });
                       },
                     })
                   }

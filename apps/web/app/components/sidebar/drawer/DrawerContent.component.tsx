@@ -11,6 +11,7 @@ import SidebarLogoutComponent from "@web/components/sidebar/drawer/SidebarLogout
 import SidebarActionsComponent from "@web/components/sidebar/SidebarActions.component";
 import SidebarAdminComponent from "@web/components/sidebar/SidebarAdmin.component";
 import SidebarUserProfile from "@web/components/sidebar/SidebarUserProfile.component";
+import SidebarVersionComponent from "@web/components/sidebar/SidebarVersion.component";
 import { useAuth } from "@web/libs/hooks/api/auth.api.hooks";
 import Image from "next/image";
 
@@ -85,6 +86,7 @@ export default function DrawerContentComponent({
         </Box>
 
         <SidebarLogoutComponent />
+        <SidebarVersionComponent />
       </Box>
     </>
   );

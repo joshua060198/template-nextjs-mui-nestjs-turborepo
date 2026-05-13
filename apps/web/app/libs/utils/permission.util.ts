@@ -21,11 +21,14 @@ export abstract class PermissionUtil implements DefaultPermission {
     permissions.some((p) => p === `manage:${this.resource}`);
 
   Read: PermissionCheckerFn = (permissions) =>
+    this.Manage(permissions) ||
     permissions.some((p) => p === `read:${this.resource}`);
 
   Create: PermissionCheckerFn = (permissions) =>
+    this.Manage(permissions) ||
     permissions.some((p) => p === `create:${this.resource}`);
 
   Update: PermissionCheckerFn = (permissions) =>
+    this.Manage(permissions) ||
     permissions.some((p) => p === `update:${this.resource}`);
 }

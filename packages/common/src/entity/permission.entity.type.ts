@@ -7,6 +7,7 @@ export const BasicPermissionSchema = zod.object({
   id: brandedUUIDId<"PermissionId">(),
   action: zod.string().required(),
   resource: zod.string().required(),
+  isSystem: zod.boolean().default(false),
   displayName: zod.string().required(),
   description: zod.string().nullable().optional(),
 });
